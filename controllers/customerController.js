@@ -3,6 +3,8 @@ const bcrypt = require("bcrypt");
 const transporter = require("../utils/mailTransport");
 const token = require("../utils/jwtToken");
 
+/*
+*/
 exports.store = async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -19,6 +21,8 @@ exports.store = async (req, res) => {
   }
 };
 
+/*
+*/
 exports.login = async (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
@@ -37,6 +41,8 @@ exports.login = async (req, res) => {
   res.status(201).json(Token);
 };
 
+/*
+*/
 exports.index = async (req, res) => {
   try {
     const customers = await Customer.find({});
@@ -46,6 +52,8 @@ exports.index = async (req, res) => {
   }
 };
 
+/*
+*/
 exports.show = async (req, res) => {
   const csmId = req.params.csmId;
   try {
