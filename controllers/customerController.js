@@ -1,6 +1,7 @@
 const Customer = require("../models/customerModel");
 const bcrypt = require("bcrypt");
 const transporter = require('../utils/mailTransport');
+const token = require('../utils/jwtToken');
 
 exports.store = async (req, res) => {
   try {
@@ -11,7 +12,9 @@ exports.store = async (req, res) => {
 
     const customer = new Customer({ name, email, password: hash });
     const csm = await customer.save();
-    res.status(201).json({ message: "Stored!", data: csm });
+    const Token = await token ;
+    res.status(201).json({ message: "Stored!", data: csm, token: Token });
+   
   } catch (error) {
     console.log(error);
   }
