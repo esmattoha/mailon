@@ -1,8 +1,14 @@
 const nodemailer = require("nodemailer");
 
-const output = `
+const mailOutput = `
 <h3>Hey Dude, Welcome you, with a big Heart from Us.</h3>
 <p>We'll send all the information on your email.</p>
+`;
+
+const passwordOutput = `
+<h3>Password Reset!</h3>
+<p>Make sure, you want to change your password?</p>
+<a href="http://localhost:3000/checkemail/customer/reset/zxdcfvgh4567sedrft234">Click Here</a>
 `;
 
 let transporter = nodemailer.createTransport({
@@ -17,12 +23,20 @@ let transporter = nodemailer.createTransport({
 });
 
 // send mail with defined transport object
-transporter.sendMail({
+const mailTransport = transporter.sendMail({
   from: '"node app " <mondaldipu904@gmail.com>',
   to: "jahidanower@email.com",
   subject: "Node app",
   text: "Hello world",
-  html: output,
+  html: mailOutput,
 });
 
-module.exports = transporter ;
+const passwordTransport = transporter.sendMail({
+  from: '"node app " <mondaldipu904@gmail.com>',
+  to: "jahidanower@email.com",
+  subject: "Node app",
+  text: "Hello world",
+  html: passwordOutput,
+});
+
+module.exports ={ mailTransport, passwordTransport };

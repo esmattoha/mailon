@@ -11,6 +11,8 @@ const customerSchema = new Schema({
         type:String,
         required:[true, 'email is required!']
     },
+    resetToken:String,
+    resertTokenExpiration: Date ,
     password:{
         type:String,
         required:true

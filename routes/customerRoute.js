@@ -17,4 +17,12 @@ router
   .route('/customer/login')
   .post(customerController.login);    
 
+router
+  .route('/customer/reset')
+  .post(customerController.resetPassword);  
+
+router
+  .route('/customer/reset/:token')
+  .post(customerController.updatePassword);   
+
 module.exports = router ;  

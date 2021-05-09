@@ -1,16 +1,17 @@
 const Customer = require("../models/customerModel");
 const bcrypt = require("bcrypt");
-const transporter = require("../utils/mailTransport");
+const crypto = require("crypto");
+const { mailTransport, passwordTransport } = require("../utils/mailTransport");
 const token = require("../utils/jwtToken");
 
 /*
-*/
+ */
 exports.store = async (req, res) => {
   try {
     const { name, email, password } = req.body;
     const hash = await bcrypt.hash(password, 12);
 
-    await transporter;
+    await mailTransport;
 
     const customer = new Customer({ name, email, password: hash });
     const csm = await customer.save();
@@ -22,8 +23,8 @@ exports.store = async (req, res) => {
 };
 
 /*
-*/
-exports.login = async (req, res) => {
+ */
+exports.login = async (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
 
@@ -38,11 +39,11 @@ exports.login = async (req, res) => {
     });
   }
   const Token = await token;
-  res.status(201).json(Token);
+  res.status(200).json(Token);
 };
 
 /*
-*/
+ */
 exports.index = async (req, res) => {
   try {
     const customers = await Customer.find({});
@@ -53,7 +54,7 @@ exports.index = async (req, res) => {
 };
 
 /*
-*/
+ */
 exports.show = async (req, res) => {
   const csmId = req.params.csmId;
   try {
@@ -62,4 +63,44 @@ exports.show = async (req, res) => {
   } catch (error) {
     console.log(error);
   }
+};
+
+/*
+ */
+exports.resetPassword = async (req, res) => {
+  try {
+    const buffer = await crypto.randomBytes(32);
+    if (!buffer) {
+      console.log(err);
+      res.status(403).json({ message: "token not generated!" });
+    }
+    const token = await buffer.toString("hex");
+    const customer = await Customer.findOne({ email: req.body.email });
+    if (!customer) {
+      res.status(404).json({ message: "user not found!" });
+    }
+    customer.resetToken = token;
+    customer.resertTokenExpiration = Date.now() + 3600000;
+    await customer.save();
+    await passwordTransport;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+/*
+ */
+exports.updatePassword = async (req, res) => {
+  const token = req.params.token;
+  const password = req.body.password;
+  const hash = await bcrypt.hash(password, 12);
+  const customer = await Customer.findOne({
+    resetToken: token,
+    resertTokenExpiration: { $gt: Date.now() },
+  });
+  customer.password = hash;
+  customer.resetToken = undefined;
+  customer.resertTokenExpiration = undefined;
+  await customer.save();
+  res.status(200).json({ message: "Passwod updated!" });
 };
