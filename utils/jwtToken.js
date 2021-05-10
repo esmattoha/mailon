@@ -3,15 +3,16 @@ const dotenv = require("dotenv");
 
 dotenv.config();
 
-const token = jwt.sign(
+const token = async(email, csmId) => {
+  return jwt.sign(
     {
-      email: 'mouduttacs@gmail.com',
-      csmid: "609827cee218975160a6cf16",
+      email:email,
+      id: csmId,
     },
     process.env.JWT_KEY,
     {
       expiresIn: "10h",
     }
   );
-
-module.exports = token ;
+};
+module.exports = token;
